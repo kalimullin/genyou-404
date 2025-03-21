@@ -257,10 +257,35 @@ function moveBall() {
         ball.dy *= scale;
     }
 
-    // Check for game over
+    // Check for win or game over
     if (ball.y + ball.radius > canvas.height) {
+        message.textContent = isMobileDevice() ? 'TAP TO RESTART' : 'PRESS SPACE TO RESTART';
         message.style.display = 'block';
+    } else if (blocks.length === 0) {
+        message.textContent = isMobileDevice() ? 'YOU WIN! TAP TO PLAY' : 'YOU WIN! PRESS SPACE';
+        message.style.display = 'block';
+        ball.dx = 0;
+        ball.dy = 0;
     }
+}
+
+// Check if device is mobile
+function isMobileDevice() {
+    return ('ontouchstart' in window) || 
+           (navigator.maxTouchPoints > 0) || 
+           (navigator.msMaxTouchPoints > 0);
+}
+
+// Update message for current device
+function updateMessage() {
+    if (isMobileDevice()) {
+        message.dataset.lose = 'TAP TO RESTART';
+        message.dataset.win = 'YOU WIN! TAP TO PLAY';
+    } else {
+        message.dataset.lose = 'PRESS SPACE TO RESTART';
+        message.dataset.win = 'YOU WIN! PRESS SPACE';
+    }
+    message.textContent = message.dataset.lose;
 }
 
 // Draw game
@@ -293,15 +318,6 @@ function gameLoop() {
     moveBall();
     draw();
     requestAnimationFrame(gameLoop);
-}
-
-// Update message for mobile
-function updateMessage() {
-    if ('ontouchstart' in window) {
-        message.textContent = 'TAP TO RESTART';
-    } else {
-        message.textContent = 'PRESS SPACE TO RESTART';
-    }
 }
 
 // Add touch restart
